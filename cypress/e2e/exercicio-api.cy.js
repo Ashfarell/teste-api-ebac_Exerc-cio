@@ -1,11 +1,18 @@
 /// <reference types="cypress" />
-import contrato from '../contracts/produtos.contract'
+import contrato from '../contracts/usuarios.contract'
 import { faker } from '@faker-js/faker';
 describe('Testes da Funcionalidade Usuários', () => {
 
-  it('Deve validar contrato de usuários', () => {
+let token
+    beforeEach (() => {
+    cy.token('Bruna@qa.com.br', 'teste').then(tkn => {
+        token = tkn
+    })
+});
+
+  it.only('Deve validar contrato de usuários', () => {
     cy.request('usuarios').then(response =>{
-      return contrato.validateAsync(response.request)                   //Validação se encontra em "request", n/ em "body"
+      return contrato.validateAsync(response.body)                   //Validação se encontra em "request", n/ em "body"
      })
   })
 
