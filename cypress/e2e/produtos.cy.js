@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import contrato from '../contracts/produtos.contract'
+import contrato from '../contracts/produtos.contract'                       //As propriedades (preço, qtd, id, etc.) que existem no teste devem estar no arquivo
 
 describe('Testes da Funcionalidade Produtos', () => {
     let token
@@ -7,7 +7,7 @@ describe('Testes da Funcionalidade Produtos', () => {
         cy.token('fulano@qa.com', 'teste').then(tkn => { token = tkn })
     });
 
-    it.only('Deve validar contrato de produtos', () => {
+    it('Deve validar contrato de produtos', () => {
         cy.request('produtos').then(response => {
             return contrato.validateAsync(response.body)
         })
@@ -71,9 +71,9 @@ describe('Testes da Funcionalidade Produtos', () => {
         })
     });
 
-    it('Deve editar um produto cadastrado previamente', () => {
-        let produto = `Produto EBAC ${Math.floor(Math.random() * 100000000)}`
-        cy.cadastrarProduto(token, produto, 250, "Descrição do produto novo", 180)
+    it.only('Deve editar um produto cadastrado previamente - PUT', () => {                              //1º Criamos um produto c/ CC e apenas depois editamos
+        let produto = `Produto EBAC ${Math.floor(Math.random() * 100000000)}`                           //Assim o código fica dinâmico e n/ depende de um produto já existente
+        cy.cadastrarProduto(token, produto, 250, "Descrição do produto criado", 180)
         .then(response => {
             let id = response.body._id
 
@@ -84,8 +84,8 @@ describe('Testes da Funcionalidade Produtos', () => {
                 body: 
                 {
                     "nome": produto,
-                    "preco": 200,
-                    "descricao": "Produto editado",
+                    "preco": 10000,
+                    "descricao": "Produto editado JB2",
                     "quantidade": 300
                   }
             }).then(response => {
@@ -98,10 +98,10 @@ describe('Testes da Funcionalidade Produtos', () => {
         let produto = `Produto EBAC ${Math.floor(Math.random() * 100000000)}`
         cy.cadastrarProduto(token, produto, 250, "Descrição do produto novo", 180)
         .then(response => {
-            let id = response.body._id
+            let id = response.body._id                                                                       //Pegamos o ID do produto criado para deletar
             cy.request({
                 method: 'DELETE',
-                url: `produtos/${id}`,
+                url: `produtos/${id}`,                                                                       //Adicionamos o ID na URL para deletar o produto criado
                 headers: {authorization: token}
             }).then(response =>{
                 expect(response.body.message).to.equal('Registro excluído com sucesso')
